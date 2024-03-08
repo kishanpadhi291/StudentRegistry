@@ -16,7 +16,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Node.js Version
 
-This project is developed and tested to work with Node.js version 18.17.0 and above.
+This project is developed and tested to work with Node.js version >= 18.17.0 and <= 21.7.0.
 
 If you don't have Node.js installed, you can download it from the official [Node.js website](https://nodejs.org/). It's recommended to use a version manager like [nvm](https://github.com/nvm-sh/nvm) to easily switch between Node.js versions.
 
@@ -121,3 +121,14 @@ The project is organized into the following main directories:
   ![EditFormModal](https://res.cloudinary.com/dnvgfs5kc/image/upload/v1709900362/ojuth9zyor8arwdo44ri.png)
 - Clicking "Show button" shows detailed information about that student.
   ![DetailPage](https://res.cloudinary.com/dnvgfs5kc/image/upload/v1709900361/w6b1e2ge2lqb5leksqly.png)
+
+## Additional Information
+
+- The result of `npm outdated` is null, indicating that all dependencies are up-to-date.
+- `depcheck` reported two unused dependencies, `jest-enviornment-jsdom` and `typescript`. It's important to note that `jest-enviornment-jsdom` is essential for testing, providing a browser-like environment using jsdom. Jest itself doesn't include a full browser environment by default, and for testing React applications, a DOM (Document Object Model) environment is often necessary to simulate interactions with the browser.
+- `typescript` is automatically installed when creating a project in TypeScript.
+
+### Note on MuiDataGrid Filters
+
+In the project, the MuiDataGrid component has been utilized, offering a streamlined interface for displaying tabular data. It's noteworthy that the standard MuiDataGrid provides a single filter at a time.
+If a more feature-rich filtering experience is desired, including multiple filters simultaneously, consider exploring the premium features available in the MUI DataGridPremium plan.
