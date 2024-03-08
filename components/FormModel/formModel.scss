@@ -1,0 +1,108 @@
+// header css
+
+// student registry form modal
+.student-registry-form-container {
+    position: absolute;
+    border-radius: 15px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    background-color: #fff;
+    max-width: 1150px;
+
+    .modal-header {
+        padding: 16px;
+        background: var(--Gray-100, #f2f4f7);
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        min-height: 65px;
+        align-items: center;
+        h3 {
+            color: var(--Gray-900, #101828);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .close-btn {
+            cursor: pointer;
+            height: 24px;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .form-wrap {
+        & label.Mui-focused {
+            color: #101828;
+        }
+        & .MuiOutlinedInput-root {
+            &.Mui-focused fieldset {
+                border-color: #5e50ac;
+            }
+        }
+        .MuiFormLabel-root {
+            color: var(--Gray-700, #344054);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+        }
+        .modal-body {
+            max-height: calc(100vh - 250px);
+            overflow: auto;
+            padding: 24px;
+            .MuiInputBase-input {
+                padding: 12.5px 14px;
+                &.MuiSelect-select {
+                    padding: 8.5px 14px;
+                    min-height: 32px;
+                    line-height: 32px;
+                }
+            }
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--Gray-200, #eaecf0);
+            .submit-btn {
+                margin-left: auto;
+                border-radius: 8px;
+                border: 1px solid #5e50ac;
+                background: #5e50ac;
+                padding: 6px 20px;
+                height: 40px;
+                color: var(--Base-White, #fff);
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 24px;
+                text-transform: capitalize;
+                &:hover {
+                    background-color: #6d5bd0;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .header-main-wrap {
+        .header-wrap {
+            .header {
+                h3 {
+                    font-size: 25px;
+                }
+            }
+        }
+    }
+    .student-registry-form-container {
+        .form-wrap {
+            .modal-body {
+                padding: 16px;
+            }
+            .modal-footer {
+                padding: 16px;
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+.details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    min-height: calc(100vh - 120px);
+    backdrop-filter: blur(8px);
+
+    p {
+        padding: 10px;
+    }
+}
+@media (max-width: 576px) {
+    .details {
+        justify-content: flex-start;
+        margin: 20px 0;
+    }
+}

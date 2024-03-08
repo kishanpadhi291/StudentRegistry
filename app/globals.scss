@@ -1,0 +1,83 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: "DM Sans", sans-serif;
+}
+
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+	.MuiCircularProgress-svg{
+		color: #5e50ac;
+	}
+}
+
+// header css
+.header-main-wrap {
+	padding: 16px;
+	background-color: #5e50ac;
+
+	.header-wrap {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 15px;
+		color: #fff;
+		.header {
+			flex: 1;
+			.header-text {
+				color: #fff;
+				font-size: 20px;
+				font-family: "DM Sans", sans-serif;
+				font-weight: 600;
+			}
+		}
+		.header-button {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+		}
+	}
+
+	.add-student-btn {
+		white-space: pre;
+		background-color: #7f6de7;
+
+		color: #fff;
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 24px;
+		border: 0;
+		transition: none;
+		align-items: center;
+		padding: 12px 20px;
+		height: 48px;
+		box-shadow: none;
+		text-transform: capitalize;
+		&:hover {
+			background-color: #6d5bd0;
+		}
+		svg {
+			margin-right: 8px;
+		}
+	}
+}
+@media (max-width: 576px) {
+	.header-main-wrap {
+		.add-student-btn {
+			padding: 12px 10px;
+			height: auto;
+			font-size: 14px;
+			line-height: 1;
+		}
+	}
+}
