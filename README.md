@@ -71,7 +71,7 @@ To run this project locally, you can clone the repository and follow these steps
 1. Clone the repository:
 
    ```bash
-   git clone git@github.com:kishanpadhi291/TestDemo.git
+   git clone git@github.com:kishanpadhi291/StudentRegistry.git
    cd TestDemo
    npm install
    npm run dev
