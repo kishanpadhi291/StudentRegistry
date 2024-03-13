@@ -113,7 +113,6 @@ const HobbiesDropdown = ({
 					id='demo-multiple-chip'
 					multiple
 					name='hobbies'
-					required
 					value={personName}
 					onChange={handleChange}
 					input={<OutlinedInput id='select-multiple-chip' label='Chip' />}

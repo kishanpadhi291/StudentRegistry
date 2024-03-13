@@ -8,15 +8,15 @@ import { configureStore } from '@reduxjs/toolkit'
 import studentSlice, { Students } from 'lib/student-slice'
 
 /**
+ * Represents the state of the Redux store.
  * @typedef {Object} StoreState
- * @property {Object} form - Form-related state.
- * @property {Students[]} form.students - Array of student data.
- * @property {number} form.added - Counter for tracking additions.
+ * @property {Object} student - The student-related state.
+ * @property {Students[]} student.filteredstudents - An array of filtered student data.
+ * @property {Students | null | undefined} student.currentStudent - The currently selected student.
  */
-// Define the structure of the Redux store state.
 export interface StoreState {
 	student: {
-		students: Students[] // Array of student data
+		filteredstudents: Students[] // Array of student data
 		currentStudent: Students | null | undefined
 	}
 }
