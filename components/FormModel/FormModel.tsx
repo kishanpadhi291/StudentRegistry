@@ -36,6 +36,7 @@ import Modal from '@mui/material/Modal'
 import {
 	Button,
 	FormControl,
+	FormHelperText,
 	Grid,
 	InputLabel,
 	MenuItem,
@@ -51,13 +52,24 @@ import { StoreState } from '@/lib/store/store'
 import { useSelector } from 'react-redux'
 import {
 	addNewStudent,
+	clearSelectedStudent,
 	saveEditedStudent,
 	selectedStudent,
 } from '@/lib/student-slice'
 import addStudentIcon from '../../assets/addStudent.svg'
 import closeBtnIcon from '../../assets/closeBtn.svg'
 import Image from 'next/image'
-
+interface FormErrors {
+	firstName: string | null
+	middleName: string | null
+	lastName: string | null
+	email: string | null
+	contactNumber: string | null
+	gender: string | null
+	collegeName: string | null
+	department: string | null
+	hobbies: string | null
+}
 export default function FormModel({
 	id,
 	detail,
@@ -67,16 +79,39 @@ export default function FormModel({
 	detail?: boolean
 	onClose?: React.Dispatch<React.SetStateAction<string | null>>
 }) {
+	const dispatch = useAppDispatch()
 	const [open, setOpen] = useState(false)
 	const currentStudent = useSelector(
 		(state: StoreState) => state.student.currentStudent
 	)
+	const [errors, setErrors] = useState<FormErrors>({
+		firstName: null,
+		middleName: null,
+		lastName: null,
+		email: null,
+		contactNumber: null,
+		gender: null,
+		collegeName: null,
+		department: null,
+		hobbies: null,
+	})
 
-	const dispatch = useAppDispatch()
-
-	// Memoized functions using useMemo and useCallback
 	const handleOpen = useCallback(() => setOpen(true), [])
 	const handleClose = useCallback(() => {
+		setErrors({
+			firstName: null,
+			middleName: null,
+			lastName: null,
+			email: null,
+			contactNumber: null,
+			gender: null,
+			collegeName: null,
+			department: null,
+			hobbies: null,
+		})
+		if (!detail) {
+			dispatch(clearSelectedStudent())
+		}
 		setOpen(false)
 		onClose?.(null)
 		id = undefined
@@ -104,27 +139,48 @@ export default function FormModel({
 			dob: formData.get('dob'),
 			hobbies: formData.get('hobbies'),
 		}
-		if (id) {
-			try {
-				dispatch(saveEditedStudent({ id, student }))
-				toast.success('Student Updated Successfully')
-				onClose?.(null)
-				setOpen(false)
-			} catch (error) {
-				toast.error(`Error:${error}`)
-			}
-		} else {
-			try {
-				dispatch(addNewStudent(student))
-				toast.success('Student Added Successfully')
-				onClose?.(null)
-				setOpen(false)
-			} catch (error) {
-				toast.error(`Error:${error}`)
+
+		const newErrors = {
+			firstName:
+				student.firstName === '' ? '*First name cannot be empty' : null,
+			middleName:
+				student.middleName === '' ? '*Middle name cannot be empty' : null,
+			lastName: student.lastName === '' ? '*Last name cannot be empty' : null,
+			email: student.email === '' ? '*Email cannot be empty' : null,
+			contactNumber:
+				student.contactNumber === '' ? '*Contact number cannot be empty' : null,
+			gender: student.gender === '' ? '*Gender cannot be empty' : null,
+			collegeName:
+				student.collegeName === '' ? '*College name cannot be empty' : null,
+			department:
+				student.department === '' ? '*Department cannot be empty' : null,
+			hobbies: student.hobbies === '' ? '*Hobbies cannot be empty' : null,
+		}
+
+		setErrors(newErrors)
+
+		if (!Object.values(newErrors).some((error) => error !== null)) {
+			if (id) {
+				try {
+					dispatch(saveEditedStudent({ id, student }))
+					toast.success('Student Updated Successfully')
+					onClose?.(null)
+					setOpen(false)
+				} catch (error) {
+					toast.error(`Error:${error}`)
+				}
+			} else {
+				try {
+					dispatch(addNewStudent(student))
+					toast.success('Student Added Successfully')
+					onClose?.(null)
+					setOpen(false)
+				} catch (error) {
+					toast.error(`Error:${error}`)
+				}
 			}
 		}
 	}
-
 	return (
 		<div className='header-main-wrap'>
 			<Box className='header-wrap'>
@@ -167,8 +223,10 @@ export default function FormModel({
 										name='firstName'
 										defaultValue={currentStudent?.firstName}
 										fullWidth
-										required
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.firstName}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
 									<TextField
@@ -176,8 +234,10 @@ export default function FormModel({
 										name='middleName'
 										defaultValue={currentStudent?.middleName}
 										fullWidth
-										required
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.middleName}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
 									<TextField
@@ -185,8 +245,10 @@ export default function FormModel({
 										name='lastName'
 										defaultValue={currentStudent?.lastName}
 										fullWidth
-										required
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.lastName}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
 									<TextField
@@ -195,8 +257,10 @@ export default function FormModel({
 										type='email'
 										defaultValue={currentStudent?.email}
 										fullWidth
-										required
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.email}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
 									<TextField
@@ -205,16 +269,18 @@ export default function FormModel({
 										type='number'
 										defaultValue={currentStudent?.contactNumber}
 										fullWidth
-										required
 										onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
 											e.target.value = Math.max(0, parseInt(e.target.value))
 												.toString()
 												.slice(0, 10)
 										}}
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.contactNumber}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
-									<FormControl fullWidth required>
+									<FormControl fullWidth>
 										<InputLabel>Gender</InputLabel>
 										<Select
 											label='Gender'
@@ -226,6 +292,9 @@ export default function FormModel({
 											<MenuItem value='other'>Other</MenuItem>
 										</Select>
 									</FormControl>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.gender}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={8} sm={6} xs={12}>
 									<TextField
@@ -234,11 +303,13 @@ export default function FormModel({
 										type='text'
 										defaultValue={currentStudent?.collegeName}
 										fullWidth
-										required
 									/>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.collegeName}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
-									<FormControl fullWidth required>
+									<FormControl fullWidth>
 										<InputLabel>Department</InputLabel>
 										<Select
 											label='Department'
@@ -251,11 +322,17 @@ export default function FormModel({
 											<MenuItem value='other'>Other</MenuItem>
 										</Select>
 									</FormControl>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.department}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={8} sm={6} xs={12}>
 									<div className='hobbies-wrap'>
 										<HobbiesDropdown defaultValue={currentStudent?.hobbies} />
 									</div>
+									<FormHelperText style={{ color: 'red' }}>
+										{errors.hobbies}
+									</FormHelperText>
 								</Grid>
 								<Grid item lg={4} sm={6} xs={12}>
 									<DatePicker

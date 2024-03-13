@@ -21,7 +21,18 @@
  */
 'use client'
 import React, { useCallback, useEffect, useState } from 'react'
-import { IconButton, Box, Tooltip, CircularProgress } from '@mui/material'
+import {
+	IconButton,
+	Box,
+	Tooltip,
+	CircularProgress,
+	TextField,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Button,
+} from '@mui/material'
 
 import './studentTable.scss'
 import { useRouter } from 'next/navigation'
@@ -38,11 +49,16 @@ import {
 	GridToolbarExport,
 	GridToolbarFilterButton,
 } from '@mui/x-data-grid'
-import { deleteStudent, clearSelectedStudent } from '@/lib/student-slice'
+import {
+	deleteStudent,
+	clearSelectedStudent,
+	searchStudents,
+} from '@/lib/student-slice'
 import Image from 'next/image'
 import showBtnIcon from '../../assets/showBtnIcon.svg'
 import editBtnIcon from '../../assets/editBtnIcon.svg'
 import deleteBtnIcon from '../../assets/deleteBtnIcon.svg'
+import ClearIcon from '@mui/icons-material/Clear'
 import dataGridDownArrowIcon from '../../assets/dataGridDownArrowIcon.svg'
 
 function capitalizeFirstLetter(str: string) {
@@ -52,10 +68,13 @@ export default function StudentTable() {
 	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const studentsData = useSelector(
-		(state: StoreState) => state.student.students
+		(state: StoreState) => state.student.filteredstudents
 	)
+	const [searchData, setSearchData] = useState<string>('')
 	const [editData, setEditData] = useState<string | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
+	const [openDeleteModal, setOpenDeleteModal] = useState(false)
+	const [deleteStudentId, setDeleteStudentId] = useState<string | null>(null)
 
 	const columns = [
 		{ field: 'name', headerName: 'Name', flex: 1, minWidth: 200 },
@@ -114,8 +133,8 @@ export default function StudentTable() {
 		setIsLoading(false)
 	}, [studentsData])
 	useEffect(() => {
-		dispatch(clearSelectedStudent())
-	}, [])
+		dispatch(searchStudents(searchData))
+	}, [searchData])
 
 	const handleEditClick = useCallback(
 		(data: string) => {
@@ -124,21 +143,25 @@ export default function StudentTable() {
 		[] // Empty dependency array as it doesn't depend on external variables
 	)
 
-	const handleDeleteClick = useCallback(
-		async (id: string) => {
-			try {
-				const result = confirm('Want to Delete?')
-				if (result) {
-					dispatch(deleteStudent(id))
-					toast.success('Student Deleted Successfully')
-				}
-			} catch (error) {
-				console.error('Error deleting student:', error)
-				toast.error('Failed to delete student')
-			}
-		},
-		[dispatch]
-	)
+	const handleDeleteClick = useCallback((id: string) => {
+		setDeleteStudentId(id)
+		setOpenDeleteModal(true)
+	}, [])
+
+	const handleDeleteConfirm = useCallback(async () => {
+		try {
+			dispatch(deleteStudent(deleteStudentId!))
+			toast.success('Student Deleted Successfully')
+			setOpenDeleteModal(false)
+		} catch (error) {
+			console.error('Error deleting student:', error)
+			toast.error('Failed to delete student')
+		}
+	}, [dispatch, deleteStudentId])
+
+	const handleDeleteCancel = useCallback(() => {
+		setOpenDeleteModal(false)
+	}, [])
 
 	const handleRowClick = useCallback(
 		(id: string) => {
@@ -169,48 +192,92 @@ export default function StudentTable() {
 					<CircularProgress />
 				</div>
 			) : (
-				<div className='table-wrapper'>
-					<DataGrid
-						rowHeight={40}
-						columnHeaderHeight={40}
-						rows={rowsForDataGrid}
-						columns={columns}
-						slots={{
-							toolbar: () => (
-								<div className='abc'>
-									<GridToolbarContainer>
-										<GridToolbarColumnsButton
-											endIcon={
-												<Image
-													src={dataGridDownArrowIcon}
-													alt='dataGridDownArrowIcon'
-												/>
-											}
-										/>
-										<GridToolbarFilterButton />
-										<GridToolbarDensitySelector
-											endIcon={
-												<Image
-													src={dataGridDownArrowIcon}
-													alt='dataGridDownArrowIcon'
-												/>
-											}
-										/>
-										<GridToolbarExport
-											endIcon={
-												<Image
-													src={dataGridDownArrowIcon}
-													alt='dataGridDownArrowIcon'
-												/>
-											}
-										/>
-									</GridToolbarContainer>
-								</div>
-							),
-						}}
-						pagination
-					/>
-				</div>
+				<>
+					<div className='table-wrapper'>
+						<DataGrid
+							rowHeight={40}
+							columnHeaderHeight={40}
+							rows={rowsForDataGrid}
+							columns={columns}
+							slots={{
+								toolbar: () => (
+									<div className='student-inputwrap'>
+										<GridToolbarContainer>
+											<GridToolbarColumnsButton
+												endIcon={
+													<Image
+														src={dataGridDownArrowIcon}
+														alt='dataGridDownArrowIcon'
+													/>
+												}
+											/>
+											<GridToolbarFilterButton />
+											<GridToolbarDensitySelector
+												endIcon={
+													<Image
+														src={dataGridDownArrowIcon}
+														alt='dataGridDownArrowIcon'
+													/>
+												}
+											/>
+											<GridToolbarExport
+												endIcon={
+													<Image
+														src={dataGridDownArrowIcon}
+														alt='dataGridDownArrowIcon'
+													/>
+												}
+											/>
+											<TextField
+												autoFocus
+												sx={{ mt: 1 }}
+												label='Search'
+												variant='outlined'
+												value={searchData}
+												onChange={(e) => setSearchData(e.target.value)}
+												InputProps={{
+													endAdornment: searchData && (
+														<IconButton
+															onClick={() => setSearchData('')}
+															edge='end'
+														>
+															<ClearIcon fontSize='small' />
+														</IconButton>
+													),
+												}}
+											/>
+										</GridToolbarContainer>
+									</div>
+								),
+							}}
+							pagination
+						/>
+					</div>
+					<Dialog
+						open={openDeleteModal}
+						onClose={handleDeleteCancel}
+						fullWidth
+						maxWidth='sm'
+					>
+						<DialogTitle className='dialogbox-delete'>Delete</DialogTitle>
+						<DialogContent>
+							<DialogContent>
+								Are you sure you want to delete this student?
+							</DialogContent>
+						</DialogContent>
+						<DialogActions>
+							<Button onClick={handleDeleteCancel} color='primary'>
+								Cancel
+							</Button>
+							<Button
+								onClick={handleDeleteConfirm}
+								style={{ backgroundColor: '#f44336', color: '#fff' }}
+							>
+								Delete
+							</Button>
+						</DialogActions>
+					</Dialog>
+				</>
 			)}
 			{editData && <FormModel id={editData} onClose={setEditData} />}
 		</>
